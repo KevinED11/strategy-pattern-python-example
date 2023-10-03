@@ -90,15 +90,15 @@ class PaymentStrategyContext:
     __payment_strategy: PaymentStrategy
 
     def make_payment(self, amount: int) -> None:
-        self.__payment_strategy.pay(amount)
+        self.__payment_strategy.pay(amount=amount)
 
     @property
     def payment_strategy(self) -> PaymentStrategy:
         return self.__payment_strategy
 
     @payment_strategy.setter
-    def payment_strategy(self, payment_strategy: PaymentStrategy) -> None:
-        self.__payment_strategy = payment_strategy
+    def payment_strategy(self, new_payment_strategy: PaymentStrategy) -> None:
+        self.__payment_strategy = new_payment_strategy
 
 
 class Main:
