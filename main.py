@@ -1,5 +1,6 @@
 import abc
 import enum
+from dataclasses import dataclass
 
 
 class PaymentStrategy(abc.ABC):
@@ -33,9 +34,9 @@ class BankTransferPayment(PaymentStrategy):
         print(f"Paid {amount} with bank transfer")
 
 
+@dataclass
 class PaymentContext:
-    def __init__(self, payment_strategy: PaymentStrategy):
-        self.__payment_strategy = payment_strategy
+    __payment_strategy: PaymentStrategy
 
     def make_payment(self, amount: int) -> None:
         self.__payment_strategy.pay(amount)
@@ -77,18 +78,18 @@ class Main:
         cash_payment = factory(AvailablePaymentMethods.CASH)
         bank_transfer_payment = factory(AvailablePaymentMethods.BANK_TRANSFER)
 
-        payment_context = PaymentContext(payment_strategy=cash_payment)
+        payment_context = PaymentContext(cash_payment)
 
-        payment_context.make_payment(100)
+        payment_context.make_payment(amount=100)
 
         payment_context.payment_strategy = paypal_payment
-        payment_context.make_payment(200)
+        payment_context.make_payment(amount=200)
 
         payment_context.payment_strategy = credit_card_payment
-        payment_context.make_payment(300)
+        payment_context.make_payment(amount=300)
 
         payment_context.payment_strategy = bank_transfer_payment
-        payment_context.make_payment(400)
+        payment_context.make_payment(amount=400)
 
 
 if __name__ == "__main__":
