@@ -9,29 +9,80 @@ class PaymentStrategy(abc.ABC):
         pass
 
 
-class CashPayment(PaymentStrategy):
+class CashPaymentStrategy(PaymentStrategy):
     def pay(self, amount: int) -> None:
         print(f"Paid {amount} with cash")
 
 
-class CreditCardPayment(PaymentStrategy):
+class CreditCardPaymentStrategy(PaymentStrategy):
     def pay(self, amount: int) -> None:
         print(f"Paid {amount} with credit card")
 
 
-class DebitCardPayment(PaymentStrategy):
+class DebitCardPaymentStrategy(PaymentStrategy):
     def pay(self, amount: int) -> None:
         print(f"Paid {amount} with debit card")
 
 
-class PayPalPayment(PaymentStrategy):
+class PayPalPaymentStrategy(PaymentStrategy):
     def pay(self, amount: int) -> None:
         print(f"Paid {amount} with PayPal")
 
 
-class BankTransferPayment(PaymentStrategy):
+class BankTransferPaymentStrategy(PaymentStrategy):
     def pay(self, amount: int) -> None:
         print(f"Paid {amount} with bank transfer")
+
+
+class PaymentStrategyFactory(abc.ABC):
+    @abc.abstractmethod
+    def get_payment_strategy(self) -> PaymentStrategy:
+        pass
+
+
+class CreditCardPaymentStrategyFactory(PaymentStrategyFactory):
+    def get_payment_strategy(self) -> PaymentStrategy:
+        return CreditCardPaymentStrategy()
+
+
+class DebitCardPaymentStrategyFactory(PaymentStrategyFactory):
+    def get_payment_strategy(self) -> PaymentStrategy:
+        return DebitCardPaymentStrategy()
+
+
+class BankTransferPaymentStrategyFactory(PaymentStrategyFactory):
+    def get_payment_strategy(self) -> PaymentStrategy:
+        return BankTransferPaymentStrategy()
+
+
+class CashPaymentStrategyFactory(PaymentStrategyFactory):
+    def get_payment_strategy(self) -> PaymentStrategy:
+        return CashPaymentStrategy()
+
+
+class PayPalPaymentStrategyFactory(PaymentStrategyFactory):
+    def get_payment_strategy(self) -> PaymentStrategy:
+        return PayPalPaymentStrategy()
+
+
+class AvailablePaymentStrategyMethods(enum.StrEnum):
+    CREDIT_CARD = "credit_card"
+    DEBIT_CARD = "debit_card"
+    PAYPAL = "paypal"
+    BANK_TRANSFER = "bank_transfer"
+    CASH = "cash"
+
+
+def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStrategyFactory:
+    available_methods = {
+        "credit_card": CreditCardPaymentStrategyFactory,
+        "debit_card": DebitCardPaymentStrategyFactory,
+        "paypal": PayPalPaymentStrategyFactory,
+        "bank_transfer": BankTransferPaymentStrategyFactory,
+        "cash": CashPaymentStrategyFactory,
+    }
+
+    return available_methods[payment_method]()
 
 
 @dataclass
@@ -50,33 +101,24 @@ class PaymentContext:
         self.__payment_strategy = payment_strategy
 
 
-class AvailablePaymentMethods(enum.StrEnum):
-    CREDIT_CARD = "credit_card"
-    DEBIT_CARD = "debit_card"
-    PAYPAL = "paypal"
-    BANK_TRANSFER = "bank_transfer"
-    CASH = "cash"
-
-
-def factory(payment_method: AvailablePaymentMethods) -> PaymentStrategy:
-    available_methods = {
-        "credit_card": CreditCardPayment,
-        "debit_card": DebitCardPayment,
-        "paypal": PayPalPayment,
-        "bank_transfer": BankTransferPayment,
-        "cash": CashPayment,
-    }
-
-    return available_methods[payment_method]()
-
-
 class Main:
     @staticmethod
     def run() -> None:
-        credit_card_payment = factory(AvailablePaymentMethods.CREDIT_CARD)
-        paypal_payment = factory(AvailablePaymentMethods.PAYPAL)
-        cash_payment = factory(AvailablePaymentMethods.CASH)
-        bank_transfer_payment = factory(AvailablePaymentMethods.BANK_TRANSFER)
+        credit_card_payment = read_payment(
+            AvailablePaymentStrategyMethods.CREDIT_CARD
+        ).get_payment_strategy()
+
+        paypal_payment = read_payment(
+            AvailablePaymentStrategyMethods.PAYPAL
+        ).get_payment_strategy()
+
+        cash_payment = read_payment(
+            AvailablePaymentStrategyMethods.CASH
+        ).get_payment_strategy()
+
+        bank_transfer_payment = read_payment(
+            AvailablePaymentStrategyMethods.BANK_TRANSFER
+        ).get_payment_strategy()
 
         payment_context = PaymentContext(cash_payment)
 
