@@ -75,18 +75,18 @@ class AvailablePaymentStrategyMethods(enum.StrEnum):
 
 def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStrategyFactory:
     available_methods = {
-        "credit_card": CreditCardPaymentStrategyFactory,
-        "debit_card": DebitCardPaymentStrategyFactory,
-        "paypal": PayPalPaymentStrategyFactory,
-        "bank_transfer": BankTransferPaymentStrategyFactory,
-        "cash": CashPaymentStrategyFactory,
+        "credit_card": CreditCardPaymentStrategyFactory(),
+        "debit_card": DebitCardPaymentStrategyFactory(),
+        "paypal": PayPalPaymentStrategyFactory(),
+        "bank_transfer": BankTransferPaymentStrategyFactory(),
+        "cash": CashPaymentStrategyFactory(),
     }
 
-    return available_methods[payment_method]()
+    return available_methods[payment_method]
 
 
 @dataclass
-class PaymentContext:
+class PaymentStrategyContext:
     __payment_strategy: PaymentStrategy
 
     def make_payment(self, amount: int) -> None:
@@ -104,33 +104,33 @@ class PaymentContext:
 class Main:
     @staticmethod
     def run() -> None:
-        credit_card_payment = read_payment(
+        credit_card_payment_strategy = read_payment(
             AvailablePaymentStrategyMethods.CREDIT_CARD
         ).get_payment_strategy()
 
-        paypal_payment = read_payment(
+        paypal_payment_strategy = read_payment(
             AvailablePaymentStrategyMethods.PAYPAL
         ).get_payment_strategy()
 
-        cash_payment = read_payment(
+        cash_payment_strategy = read_payment(
             AvailablePaymentStrategyMethods.CASH
         ).get_payment_strategy()
 
-        bank_transfer_payment = read_payment(
+        bank_transfer_payment_strategy = read_payment(
             AvailablePaymentStrategyMethods.BANK_TRANSFER
         ).get_payment_strategy()
 
-        payment_context = PaymentContext(cash_payment)
+        payment_context = PaymentStrategyContext(cash_payment_strategy)
 
         payment_context.make_payment(amount=100)
 
-        payment_context.payment_strategy = paypal_payment
+        payment_context.payment_strategy = paypal_payment_strategy
         payment_context.make_payment(amount=200)
 
-        payment_context.payment_strategy = credit_card_payment
+        payment_context.payment_strategy = credit_card_payment_strategy
         payment_context.make_payment(amount=300)
 
-        payment_context.payment_strategy = bank_transfer_payment
+        payment_context.payment_strategy = bank_transfer_payment_strategy
         payment_context.make_payment(amount=400)
 
 
