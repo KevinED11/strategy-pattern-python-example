@@ -1,7 +1,6 @@
-import abc
 import enum
 from dataclasses import dataclass
-from typing import Protocol, NamedTuple
+from typing import Protocol
 
 
 class PaymentStrategyFn(Protocol):
