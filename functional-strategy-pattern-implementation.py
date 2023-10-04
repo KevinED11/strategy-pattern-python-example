@@ -64,14 +64,14 @@ class AvailablePaymentStrategyMethods(enum.StrEnum):
 
 def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStrategyFn:
     available_methods = {
-        "credit_card": credit_card_payment_strategy_factory(),
-        "debit_card": debit_card_payment_strategy_factory(),
-        "paypal": paypal_payment_strategy_factory(),
-        "bank_transfer": bank_transfer_payment_strategy_factory(),
-        "cash": cash_payment_strategy_factory(),
+        "credit_card": credit_card_payment_strategy_factory,
+        "debit_card": debit_card_payment_strategy_factory,
+        "paypal": paypal_payment_strategy_factory,
+        "bank_transfer": bank_transfer_payment_strategy_factory,
+        "cash": cash_payment_strategy_factory,
     }
 
-    return available_methods[payment_method]
+    return available_methods[payment_method]()
 
 
 @dataclass
@@ -91,23 +91,23 @@ class PaymentStrategyContext:
 
 
 def main() -> None:
-    credit_card_strategy = read_payment(
+    credit_card_strategy: PaymentStrategyFn = read_payment(
         AvailablePaymentStrategyMethods.CREDIT_CARD
     )
 
-    paypal_strategy = read_payment(
+    paypal_strategy: PaymentStrategyFn = read_payment(
         AvailablePaymentStrategyMethods.PAYPAL
     )
 
-    cash_strategy = read_payment(
+    cash_strategy: PaymentStrategyFn = read_payment(
         AvailablePaymentStrategyMethods.CASH
     )
 
-    bank_transfer_strategy = read_payment(
+    bank_transfer_strategy: PaymentStrategyFn = read_payment(
         AvailablePaymentStrategyMethods.BANK_TRANSFER
     )
 
-    payment_context = PaymentStrategyContext(cash_strategy)
+    payment_context: PaymentStrategyContext = PaymentStrategyContext(cash_strategy)
 
     payment_context.make_payment(amount=100)
 
