@@ -1,6 +1,5 @@
 import abc
 import enum
-from dataclasses import dataclass
 
 
 class PaymentStrategy(abc.ABC):
@@ -85,9 +84,9 @@ def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStra
     return available_methods[payment_method]
 
 
-@dataclass
 class PaymentStrategyContext:
-    __payment_strategy: PaymentStrategy
+    def __init__(self, payment_strategy: PaymentStrategy) -> None:
+        self.__payment_strategy = payment_strategy
 
     def make_payment(self, amount: int) -> None:
         self.__payment_strategy.pay(amount=amount)
