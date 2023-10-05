@@ -73,9 +73,9 @@ def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStra
     return available_methods[payment_method]()
 
 
-@dataclass
 class PaymentStrategyContext:
-    __payment_strategy_fn: PaymentStrategyFn
+    def __init__(self, payment_strategy_fn: PaymentStrategyFn) -> None:
+        self.__payment_strategy_fn = payment_strategy_fn
 
     def make_payment(self, amount: int) -> None:
         self.__payment_strategy_fn(amount=amount)
