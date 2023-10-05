@@ -75,18 +75,18 @@ def read_payment(payment_method: AvailablePaymentStrategyMethods) -> PaymentStra
 
 @dataclass
 class PaymentStrategyContext:
-    __payment_strategy: PaymentStrategyFn
+    __payment_strategy_fn: PaymentStrategyFn
 
     def make_payment(self, amount: int) -> None:
-        self.__payment_strategy(amount=amount)
+        self.__payment_strategy_fn(amount=amount)
 
     @property
     def payment_strategy(self) -> PaymentStrategyFn:
-        return self.__payment_strategy
+        return self.__payment_strategy_fn
 
     @payment_strategy.setter
     def payment_strategy(self, new_payment_strategy: PaymentStrategyFn) -> None:
-        self.__payment_strategy = new_payment_strategy
+        self.__payment_strategy_fn = new_payment_strategy
 
 
 def main() -> None:
